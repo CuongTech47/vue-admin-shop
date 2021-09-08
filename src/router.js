@@ -6,7 +6,7 @@ Vue.use(Router)
 // admin project pages
 import home from './components/pages/Home'
 import category from './components/pages/Category'
-
+import brand from './components/pages/Brand'
 const routes = [
     {
         path: '/',
@@ -18,6 +18,12 @@ const routes = [
         path: '/category',
         component: category,
         name: 'category'
+
+    },
+    {
+        path: '/brand',
+        component: brand,
+        name: 'brand'
 
     },
 ]
