@@ -21,6 +21,7 @@
               <li><router-link to="/"><Icon type="ios-speedometer" /> DashBoard</router-link></li>
               <li><router-link to="category"><Icon type="ios-bookmark" /> Category</router-link></li>
               <li><router-link to="brand"><Icon type="ios-bookmark" /> Brand</router-link></li>
+              <li><router-link to="product"><Icon type="ios-bookmark" /> Product</router-link></li>
             </ul>
           </div>
         </div>

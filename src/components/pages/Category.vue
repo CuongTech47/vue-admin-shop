@@ -9,7 +9,7 @@
           <p class="_title0">
             Category
             <Button @click="addModal = true"
-              ><Icon type="md-add" /> Add tag</Button
+              ><Icon type="md-add" /> Add Category</Button
             >
           </p>
 

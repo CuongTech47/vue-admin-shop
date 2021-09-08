@@ -7,6 +7,7 @@ Vue.use(Router)
 import home from './components/pages/Home'
 import category from './components/pages/Category'
 import brand from './components/pages/Brand'
+import product from './components/pages/Product'
 const routes = [
     {
         path: '/',
@@ -24,6 +25,12 @@ const routes = [
         path: '/brand',
         component: brand,
         name: 'brand'
+
+    },
+    {
+        path: '/product',
+        component: product,
+        name: 'product'
 
     },
 ]
