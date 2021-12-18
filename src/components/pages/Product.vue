@@ -18,8 +18,11 @@
               <!-- TABLE TITLE -->
               <tr>
                 <th>Id</th>
+                <th>Product Name</th>
                 <th>Category Name</th>
-                <th>Category Status</th>
+                <th>Brand Name</th>
+                <th>Product Image</th>
+                <th>Product Status</th>
                 <th>Created at</th>
                 <th>Action</th>
               </tr>
@@ -29,6 +32,7 @@
               <tr v-for="(cat, i) in cats" :key="i">
                 <td>{{ cat.category_id }}</td>
                 <td class="_table_name">{{ cat.category_name }}</td>
+                <td class="_table_name">{{ cat.brand_name }}</td>
                 <td v-if="cat.category_status == 0">An</td>
                 <td v-if="cat.category_status == 1">Hien thi</td>
                 <td>{{ cat.created_at }}</td>
@@ -44,13 +48,29 @@
         <!-- ADD CATEGORY MODAL -->
         <Modal
           v-model="addModal"
-          title="Add Category"
+          title="Add Product"
           :mask-closable="false"
           :closable="false"
         >
           <Form v-model="data" :label-width="80">
             <FormItem label="Name">
               <Input v-model="data.category_name" placeholder="Enter your name"></Input>
+            </FormItem>
+            <FormItem label="Image">
+                  <Upload
+                      :before-upload="handleUpload"
+                      action="//jsonplaceholder.typicode.com/posts/">
+                      <Button icon="ios-cloud-upload-outline">Select the file to upload</Button>
+                  </Upload>
+                  <div v-if="file !== null">Upload file: {{ file.name }} <Button type="text" @click="upload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Click to upload' }}</Button></div>
+            </FormItem>
+            <FormItem label="Price">
+              <InputNumber
+                :max="1000000000"
+                v-model="value9"
+                :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                :parser="value => value.replace(/\$\s?|(,*)/g, '')">
+            </InputNumber>
             </FormItem>
             <FormItem label="Desc">
               <Input v-model="data.category_desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>
@@ -66,7 +86,7 @@
             <Button type="default" @click="addModal= false">Close</Button>
             <Button
               type="primary"
-              @click="add_category"
+              @click="add_product"
               :disabled="isAdding"
               :loading="isAdding"
               >{{ isAdding ? "Adding.." : "Add Category" }}</Button>
@@ -127,6 +147,8 @@ export default {
         category_name: "",
         category_desc: "",
         category_status: "",
+        file: null,
+        loadingStatus: false
       },
       addModal: false,
       editModal: false,
@@ -146,7 +168,8 @@ export default {
   },
 
   methods: {
-    async add_category() {
+
+    async add_product() {
         if (this.data.category_name.trim() == "")
           return this.e("Category name is required");
         if (this.data.category_desc.trim() == "")
@@ -234,7 +257,21 @@ export default {
       this.deleteItem = deleteModalObj
       this.showDeleteModal = true,
       this.deletingIndex = i
+    },
+    handleUpload (file) {
+      this.file = file
+      return false
+    },
+    upload () {
+      this.loadingStatus = true
+      setTimeout(() => {
+        this.file =null
+        this.loadingStatus = false
+        this.$Message.success('Success')
+
+      },1500)
     }
+    
   },
   async created() {
     const res = await axios.get("http://localhost:8000/api/v1/category");
