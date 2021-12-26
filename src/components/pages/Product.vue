@@ -57,12 +57,9 @@
               <Input v-model="data.category_name" placeholder="Enter your name"></Input>
             </FormItem>
             <FormItem label="Image">
-                  <Upload
-                      :before-upload="handleUpload"
-                      action="//jsonplaceholder.typicode.com/posts/">
-                      <Button icon="ios-cloud-upload-outline">Select the file to upload</Button>
-                  </Upload>
-                  <div v-if="file !== null">Upload file: {{ file.name }} <Button type="text" @click="upload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Click to upload' }}</Button></div>
+              <div>
+                <input type="file" @change="imageChanged">
+              </div>
             </FormItem>
             <FormItem label="Price">
               <InputNumber
@@ -127,7 +124,7 @@
                 <span>Delete confirmation</span>
             </p>
             <div style="text-align:center">
-                <p>Are you sure you want to delete Category ?</p>
+                <p>Are you sure you want to delete Product ?</p>
             </div>
             <div slot="footer">
                 <Button type="error" @click="delete_category" size="large" long :loading="isDeleing" :disabled="isDeleing">Delete</Button>
@@ -139,25 +136,30 @@
 </template>
 
 <script>
+
 import axios from "axios";
 export default {
   data() {
+    
     return {
       data: {
-        category_name: "",
-        category_desc: "",
-        category_status: "",
-        file: null,
-        loadingStatus: false
+        product_name: "",
+        product_price:"",
+        product_desc: "",
+        product_status: "",
+        product_image:""
       },
+      
       addModal: false,
       editModal: false,
       isAdding: false,
-      cats: [],
+      pros: [],
       editData: {
-        category_name: "",
-        category_desc: "",
-        category_status: "",
+        product_name: "",
+        product_price:"",
+        product_desc: "",
+        product_status: "",
+        product_image:""
       },
       index: -1,
       deletingIndex: -1,
@@ -168,17 +170,16 @@ export default {
   },
 
   methods: {
-
     async add_product() {
-        if (this.data.category_name.trim() == "")
+        if (this.data.product_name.trim() == "")
           return this.e("Category name is required");
         if (this.data.category_desc.trim() == "")
           return this.e("Category desc is required");
         if (this.data.category_status.trim() == "")
           return this.e("Category status is required");
-      const res = await axios.post("http://localhost:8000/api/v1/category",this.data);
+      const res = await axios.post("http://localhost:8000/api/v1/product",this.data);
       if(res.status === 201) {
-        this.cats.unshift(res.data.data);
+        this.pros.unshift(res.data.data);
         this.s("Tag has been added successfully!");
         this.addModal = false;
         this.data= "";
@@ -218,12 +219,12 @@ export default {
         }
       }
     },
-    showEditModal(cat, index){
+    showEditModal(pros, index){
 			let obj = {
-        category_id : cat.category_id,
-				category_name : cat.category_name,
-        category_desc:cat.category_desc,
-        category_status:cat.category_status,
+        category_id : pros.category_id,
+				category_name : pros.category_name,
+        category_desc:pros.category_desc,
+        category_status:pros.category_status,
         
 			}
 			this.editData = obj
@@ -242,12 +243,12 @@ export default {
       this.isDeleing = false
       this.showDeleteModal = false
     },
-    showDeletingModal(cat, i) {
+    showDeletingModal(pros, i) {
       let deleteModalObj = {
-        category_id : cat.category_id,
-				category_name : cat.category_name,
-        category_desc:cat.category_desc,
-        category_status:cat.category_status,
+        category_id : pros.category_id,
+				category_name : pros.category_name,
+        category_desc:pros.category_desc,
+        category_status:pros.category_status,
         /* data: cat,
         deletingIndex: i,
         isDeleted: false, */
@@ -258,18 +259,14 @@ export default {
       this.showDeleteModal = true,
       this.deletingIndex = i
     },
-    handleUpload (file) {
-      this.file = file
-      return false
-    },
-    upload () {
-      this.loadingStatus = true
-      setTimeout(() => {
-        this.file =null
-        this.loadingStatus = false
-        this.$Message.success('Success')
-
-      },1500)
+    imageChanged (e) {
+      console.log(e.target.files[0])
+      let fileReader = new FileReader()
+      fileReader.readAsDataURL(e.target.files[0])
+      fileReader.onload = (e) => {
+        this.data.image = e.target.result
+      }
+      console.log(this.data)
     }
     
   },
