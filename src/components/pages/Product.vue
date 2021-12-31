@@ -22,6 +22,7 @@
                 <th>Category Name</th>
                 <th>Brand Name</th>
                 <th>Product Image</th>
+                <th>Product Price</th>
                 <th>Product Status</th>
                 <th>Created at</th>
                 <th>Action</th>
@@ -30,12 +31,28 @@
 
               <!-- ITEMS -->
               <tr v-for="(cat, i) in cats" :key="i">
-                <td>{{ cat.category_id }}</td>
-                <td class="_table_name">{{ cat.category_name }}</td>
-                <td class="_table_name">{{ cat.brand_name }}</td>
+                <td>1</td>
+                <td class="_table_name">product name</td>
+                <td >{{ cat.category_name }}</td>
+                <td class="_table_name">brand</td>
+                <td >image</td>
+                <td >price</td>
+                
                 <td v-if="cat.category_status == 0">An</td>
                 <td v-if="cat.category_status == 1">Hien thi</td>
-                <td>{{ cat.created_at }}</td>
+                <td >created</td>
+                <!-- <td v-if="cat.category_status == 0">An</td>
+                <td v-if="cat.category_status == 1">Hien thi</td> -->
+                
+                <!-- <td>fdsfd</td>
+                <td>{{ cat.category_name }}</td>
+                <td class="_table_name"></td>
+                <td class="_table_name">{{ pro.brand_name }}</td>
+                <td class="_table_name">{{ pro.product_image }}</td>
+                <td class="_table_name">{{ pro.product_price }}</td>
+                <td v-if="pro.product_status == 0">An</td>
+                <td v-if="pro.product_status == 1">Hien thi</td>
+                <td>{{ pro.created_at }}</td> -->
                 <td>
                   <Button type="info" size="small" @click="showEditModal(cat, i)">Edit</Button>
                   <Button type="error" size="small" @click="showDeletingModal(cat, i)">Delete</Button>
@@ -54,7 +71,7 @@
         >
           <Form v-model="data" :label-width="80">
             <FormItem label="Name">
-              <Input v-model="data.category_name" placeholder="Enter your name"></Input>
+              <Input v-model="data.product_name" placeholder="Enter your name"></Input>
             </FormItem>
             <FormItem label="Image">
               <div>
@@ -70,10 +87,10 @@
             </InputNumber>
             </FormItem>
             <FormItem label="Desc">
-              <Input v-model="data.category_desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>
+              <Input v-model="data.product_desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>
             </FormItem>
             <FormItem label="Trang Thai">
-              <Select v-model="data.category_status" placeholder="chon trang thai hien thi">
+              <Select v-model="data.product_status" placeholder="chon trang thai hien thi">
                   <Option value="0">An</Option>
                   <Option value="1">Hien Thi</Option>
               </Select>
@@ -86,7 +103,7 @@
               @click="add_product"
               :disabled="isAdding"
               :loading="isAdding"
-              >{{ isAdding ? "Adding.." : "Add Category" }}</Button>
+              >{{ isAdding ? "Adding.." : "Add Product" }}</Button>
           </div>
         </Modal>
 
@@ -143,23 +160,29 @@ export default {
     
     return {
       data: {
-        product_name: "",
+        /* product_name: "",
         product_price:"",
         product_desc: "",
         product_status: "",
-        product_image:""
+        product_image:"",
+        category_name: "", */
+        category_name: "",
+        category_desc: "",
+        category_status: "",
       },
       
       addModal: false,
       editModal: false,
       isAdding: false,
       pros: [],
+      cats: [],
+      brands: [],
       editData: {
         product_name: "",
         product_price:"",
         product_desc: "",
         product_status: "",
-        product_image:""
+        product_image:""                                      
       },
       index: -1,
       deletingIndex: -1,
@@ -172,11 +195,15 @@ export default {
   methods: {
     async add_product() {
         if (this.data.product_name.trim() == "")
-          return this.e("Category name is required");
-        if (this.data.category_desc.trim() == "")
-          return this.e("Category desc is required");
-        if (this.data.category_status.trim() == "")
-          return this.e("Category status is required");
+          return this.e("Product name is required");
+        if (this.data.product_image.trim() == "")
+          return this.e("Product image is required");
+        if (this.data.product_price.trim() == "")
+          return this.e("Product price is required");
+        if (this.data.product_desc.trim() == "")
+          return this.e("Proudct desc is required");
+        if (this.data.product_status.trim() == "")
+          return this.e("Product status is required");
       const res = await axios.post("http://localhost:8000/api/v1/product",this.data);
       if(res.status === 201) {
         this.pros.unshift(res.data.data);
@@ -185,8 +212,8 @@ export default {
         this.data= "";
       } else {
         if(res.status==422){
-					if(res.data.errors.category_name){
-						this.e(res.data.errors.category_name[0])
+					if(res.data.errors.product_name){
+						this.e(res.data.errors.product_name[0])
 					}
 					
 				}else{
@@ -195,12 +222,16 @@ export default {
       }
     },
     async edit_category() {
-        if (this.editData.category_name.trim() == "")
-          return this.e("Category name is required");
-        if (this.editData.category_desc.trim() == "")
-          return this.e("Category desc is required");
-        if(this.editData.category_status.trim() == "")
-          return this.e("Category status is required");
+        if (this.data.product_name.trim() == "")
+          return this.e("Product name is required");
+        if (this.data.product_image.trim() == "")
+          return this.e("Product image is required");
+        if (this.data.product_price.trim() == "")
+          return this.e("Product price is required");
+        if (this.data.product_desc.trim() == "")
+          return this.e("Proudct desc is required");
+        if (this.data.product_status.trim() == "")
+          return this.e("Product status is required");
       const res = await axios.patch(`http://localhost:8000/api/v1/category/${this.editData.category_id}`,this.editData)
       if (res.status === 200) {
         this.cats[this.index].category_name = this.editData.category_name;
@@ -270,6 +301,14 @@ export default {
     }
     
   },
+  /* async created() {
+    const res = await axios.get("http://localhost:8000/api/v1/product");
+    if (res.status == 200) {
+      this.pros = res.data.data;
+    } else {
+      this.swr();
+    }
+  }, */
   async created() {
     const res = await axios.get("http://localhost:8000/api/v1/category");
     if (res.status == 200) {
@@ -278,5 +317,6 @@ export default {
       this.swr();
     }
   },
+  
 };
 </script>
